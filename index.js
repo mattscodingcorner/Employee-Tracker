@@ -15,6 +15,8 @@ connection.connect(function (err) {
     showPrompt();
 });
 
+//inquirer prompts
+
 const showPrompt = () => {
     inquirer.prompt([
         {
@@ -29,6 +31,7 @@ const showPrompt = () => {
                 'Add Role',
                 'View All Departments',
                 'Add Department',
+                'Quit'
             ]
         }
     ]).then((answer) => {
@@ -54,6 +57,11 @@ const showPrompt = () => {
             case 'Add Department':
                 addDepartment();
                 break;
+                case 'Quit':
+                    connection.end();
+                    break;
         }
     })
-}
+};
+
+
