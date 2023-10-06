@@ -71,3 +71,51 @@ const viewAllEmployees = () => {
         showPrompt();
     })
 };
+
+const addEmployee = () => {
+    connection.query('SELECT * FROM role', function (err, res) {
+        if (err) throw err;
+        connection.query('SELECT * FROM employee', function (err, res2) {
+            if (err) throw err;
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: 'What is the first name of the employee?'
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: 'What is the last name of the employee?'
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'What is the role of the employee?',
+                    choices: res.map(role => role.title)
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: 'Who is the manager of the employee?',
+                    choices: res2.map(manager => manager.first_name + ' ' + manager.last_name)
+                }
+            ]).then((answer) => {
+                let roleID = res.find(role => role.title === answer.role).id;
+                let managerID = res2.find(manager => manager.first_name + ' ' + manager.last_name === answer.manager).id;
+                connection.query('INSERT INTO employee SET ?',
+                    {
+                        first_name: answer.firstName,
+                        last_name: answer.lastName,
+                        role_id: roleID,
+                        manager_id: managerID
+                    },
+                    function (err, res) {
+                        if (err) throw err;
+                        console.log('Employee added!');
+                        showPrompt();
+                    })
+            })
+        })
+    });
+};
